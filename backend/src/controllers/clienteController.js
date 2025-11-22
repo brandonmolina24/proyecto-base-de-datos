@@ -14,18 +14,12 @@ const crear = async (req, res) => {
   }
 };
 
-// Listar clientes
 const listar = async (req, res) => {
   try {
-    const { page = 1, limit = 10, estado, sector } = req.query;
+    const { page = 1, limit = 10 } = req.query;
     const offset = (page - 1) * limit;
 
-    const where = {};
-    if (estado) where.Estado = estado;
-    if (sector) where.SectorEconomico = sector;
-
     const { count, rows } = await Cliente.findAndCountAll({
-      where,
       limit: parseInt(limit),
       offset: parseInt(offset),
       order: [['FechaCreacion', 'DESC']],
@@ -42,7 +36,6 @@ const listar = async (req, res) => {
     res.status(500).json({ error: 'Error en el servidor' });
   }
 };
-
 // Obtener cliente por ID
 const obtenerPorId = async (req, res) => {
   try {

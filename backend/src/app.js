@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
+const connectMongo = require('./config/mongo');
 
 require('dotenv').config();
 
@@ -54,6 +55,7 @@ const solicitudRoutes = require('./routes/solicitudRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const prestamoRoutes = require('./routes/prestamoRoutes');
 const pagoRoutes = require('./routes/pagoRoutes');
+
 // Usar rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/clientes', clienteRoutes);
@@ -97,18 +99,18 @@ const PORT = process.env.PORT || 3000;
 const startServer = async () => {
   try {
     await sequelize.authenticate();
-    console.log('✅ Conexión a la base de datos establecida');
-    
+    console.log('✅ Conexión a MySQL (Sequelize) establecida');
+
+    await connectMongo(); // <-- 2. Conéctate a Mongo
+
     app.listen(PORT, () => {
-      console.log(`🚀 Servidor en puerto ${PORT}`);
-      console.log(`📝 Entorno: ${process.env.NODE_ENV}`);
+      console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`);
     });
   } catch (error) {
-    console.error('❌ Error al iniciar:', error);
+    console.error('❌ Error al iniciar el servidor:', error);
     process.exit(1);
   }
 };
-
 startServer();
 
 module.exports = app;
